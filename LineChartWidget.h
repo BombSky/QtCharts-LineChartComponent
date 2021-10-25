@@ -3,6 +3,7 @@
 
 #include <QtCharts>
 #include <QList>
+#include <list>
 #include <QPoint>
 #include <QTime>
 #include "IDataChart.h"
@@ -174,19 +175,23 @@ signals:
     void SigLegendSelected(const QString strLegendId, const QString strDataId, const int nTimeStamp);
 
 public:
+//界面
     QChart* pLineChart = nullptr;     //图表组件，可理解为画笔，用它画曲线
     QChartView* pLineChartView = nullptr;
-
+    QVBoxLayout *pVLayoutLineChart = nullptr;
+    RangeSlider *pRangeXAxisControlTwoSpinBox = nullptr;
+//轴
     QValueAxis *pYaxisStyle = nullptr;             //y坐标轴
     QValueAxis *pValueXaxisStyle = nullptr;          //int类型轴(用作X轴)
     QDateTimeAxis *pXaxisStyle = nullptr;          //时间类型轴(用作X轴)
-    int XaxisRange;
-    int TimeStep;
-    QVBoxLayout *pVLayoutLineChart = nullptr;
-    RangeSlider *pRangeXAxisControlTwoSpinBox = nullptr;
-    QString *pTimeFormat;
-    const AXIS_X_SCALE_e *m_pEcale = nullptr;
+//X轴位置指针
 
+//    QList<DATA_POINT_t*> *m_pYAxisLocationRecord;       //从大到小排列的线条数据
+//    QList<DATA_POINT_t*>::iterator iter_XAxisStartShow = m_pYAxisLocationRecord->end();
+//    QList<DATA_POINT_t*>::iterator iter_XAxisEndShow = m_pYAxisLocationRecord->begin();
+//    QList<DATA_POINT_t*>::iterator iter_AddDate;
+//date
+    QList<DATA_POINT_t*>* pLineSeriesSize;
     struct LEGEND_DATA_INFO
     {
         QString LegendID;					// 仪器ID;    会有很多重复的仪器ID
@@ -197,6 +202,15 @@ public:
              LegendID(LegendID), DataID (DataID), pLineSeriesList(pLineSeriesList){}
     };
     QList<LEGEND_DATA_INFO*> *pLineSeriesAndIDList;
+//参数
+    const AXIS_X_SCALE_e *m_pEcale = nullptr;
+    int XaxisRange;
+    qint64 displayLower;
+    qint64 displayupper;
+    int TimeStep;
+    QString *pTimeFormat;
+
+
     template<typename T>void AddInpLineChartAll(T XAxis);
     void SetXaxisRange(int rangInt);
 
@@ -210,10 +224,15 @@ private:
     void XAxisIntAdqptive(const qint64 &newMaxTime);
 
     void SetXAxisQDateTimeType();
+    void InitXAxisQDateTimeRange(const qint64 &startTime);
     void XAxisQDateTimeAdaptive(const qint64 &newMaxTime);
 
     void SetXAxisMin();
+
     void SetYAxisStyle();
+    void SetYAxisAdaptive(DATA_POINT_t &newDATA_POINT);
+//    void AddDateInYAxisLocationRecord(DATA_POINT_t* newDate);
+
     LEGEND_DATA_INFO *FindDataID(QString Refer);
     QStringList FindLegendList(QString Refer);
     void DataPointToLineSeries(QLineSeries* pLineSeries,const QList<DATA_POINT_t>* inputPointList);

@@ -24,7 +24,8 @@ private slots:
 
 private:
     QTimer *timer;
-    int b;
+    int b, c;
+    qint64 intTime64;
     QDateTime dateTime;
     LineChartWidget bs;
     QList<DATA_INFO_t> testDataINFOList;

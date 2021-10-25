@@ -14,7 +14,8 @@ namespace DataChart
         AXIS_X_SCALE_HOUR,
         AXIS_X_SCALE_WEEK,
 		AXIS_X_SCALE_MONTH,
-		AXIS_X_SCALE_SECS
+		AXIS_X_SCALE_SECS,
+		AXIS_X_SCALE_INT
 	};
 
 	struct DATA_POINT_t

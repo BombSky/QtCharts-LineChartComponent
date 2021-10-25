@@ -22,7 +22,7 @@ bool LineChartWidget::StartDraw()
         qDebug() << "未初始化x轴类型";
         return false;       //未初始化X轴类型
     }
-    if (AXIS_X_SCALE_WEEK == *m_pEcale)
+    if (AXIS_X_SCALE_INT == *m_pEcale)
         LineChartWidget::AddInpLineChartAll(pValueXaxisStyle);
     else
         LineChartWidget::AddInpLineChartAll(pXaxisStyle);
@@ -54,9 +54,16 @@ void LineChartWidget::DeleteLegend(const QString& strLegendId)
 
 bool LineChartWidget::InitData(const QString& strLegendId, const QList<DATA_INFO_t>& lstDataInfos)
 {
+    //清理
     pLineSeriesAndIDList->clear();
+    //添加
     foreach(DATA_INFO_t DATA_INFO , lstDataInfos)
         AddLineSeriesInLineSeriesAndIDList(strLegendId, DATA_INFO.id, &DATA_INFO.values);
+    //设置画幅起始点
+//    lstDataInfos.begin()->values.begin();
+    //设置画幅结束点
+
+    InitXAxisQDateTimeRange(lstDataInfos.begin()->values.begin()->timeStamp);
     return true;
 }
 
@@ -67,7 +74,7 @@ bool LineChartWidget::AppendData(const QString& strLegendId, const QString& strD
         return false;
     QLineSeries *pLineSeries = i->pLineSeriesList;
     DataPointToLineSeries(pLineSeries, &lstDataValues);
-    if (AXIS_X_SCALE_WEEK == *m_pEcale)
+    if (AXIS_X_SCALE_INT == *m_pEcale)
     {
         XAxisIntAdqptive(lstDataValues.begin()->timeStamp);
         return true;
@@ -94,11 +101,12 @@ void LineChartWidget::SetXAxisScale(const DataChart::AXIS_X_SCALE_e ecale)
     m_pEcale = &ecale;
     switch (ecale)
     {
-    case AXIS_X_SCALE_MINUTE: *pTimeFormat = "hh:mm"; TimeStep = 60;    break;
-    case AXIS_X_SCALE_HOUR:   *pTimeFormat = "dd:hh"; TimeStep = 3600;  break;
-    case AXIS_X_SCALE_MONTH:  *pTimeFormat = "yy:MM"; TimeStep = 108000;break;
-    case AXIS_X_SCALE_WEEK:   break;
-    case AXIS_X_SCALE_SECS:   *pTimeFormat = "mm:ss"; TimeStep = 1;     break;
+    case AXIS_X_SCALE_MINUTE: TimeStep = 60;     break;
+    case AXIS_X_SCALE_HOUR:   TimeStep = 3600;   break;
+    case AXIS_X_SCALE_MONTH:  TimeStep = 2592000;break;
+    case AXIS_X_SCALE_WEEK:   TimeStep = 604800; break;
+    case AXIS_X_SCALE_SECS:   TimeStep = 1;      break;
+    case AXIS_X_SCALE_INT :   break;
     }
     InItLineChart();
     InItRangeXAxisControlTwoSpinBox();

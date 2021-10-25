@@ -20,46 +20,71 @@ MainWindow::MainWindow(QWidget *parent)
 //    QVBoxLayout *pVLayout = new QVBoxLayout(ui->widget);
 //    pVLayout->addWidget(bs.pLineChartView);
     bs.SetXAxisScale(AXIS_X_SCALE_SECS);
-    QString timeformat = "mm:ss";
-//    dateTime = QDateTime::fromString("00:00", "hh:mm");
-
+    QString timeformat = "yyyy/MM/dd hh:mm:ss";
+    intTime64 = QDateTime::fromString("2021/10/22 00:00:00", timeformat).toMSecsSinceEpoch();
+//    c = 604800;
+    c = 1000;
     testLegend.id = "Legend1";
-    testData.timeStamp = dateTime.fromString("00:00", timeformat).toMSecsSinceEpoch();
+    testData.timeStamp = intTime64;
+    qDebug() << "inMain:" << QDateTime::fromMSecsSinceEpoch(intTime64);
 //    testData.timeStamp = 0;
     testData.value     = 0;
     testDataList.append(testData);
-    testData.timeStamp = dateTime.fromString("00:01", timeformat).toMSecsSinceEpoch();
+
+    intTime64 += c;
+    testData.timeStamp = intTime64;
+    qDebug() << "inMain:" << QDateTime::fromMSecsSinceEpoch(intTime64);
 //    testData.timeStamp = 1;
     testData.value     = 10;
     testDataList.append(testData);
-    testData.timeStamp = dateTime.fromString("00:02", timeformat).toMSecsSinceEpoch();
+
+
+    intTime64 += c;
+    testData.timeStamp = intTime64;
+    intTime64 += c;
+    qDebug() << "inMain:" << QDateTime::fromMSecsSinceEpoch(intTime64);
 //    testData.timeStamp = 2;
     testData.value     = 5;
     testDataList.append(testData);
-    testData.timeStamp = dateTime.fromString("00:03", timeformat).toMSecsSinceEpoch();
+
+    testData.timeStamp = intTime64;
+    intTime64 += c;
+    qDebug() << "inMain:" << QDateTime::fromMSecsSinceEpoch(intTime64);
 //    testData.timeStamp = 3;
     testData.value     = 20;
     testDataList.append(testData);
+
     testDataINFO.values = testDataList;
     testDataINFO.id = "data1";
     testDataINFOList.append(testDataINFO);
 //    testDataINFO.values = testData;
-
+    bs.InitData("data1", testDataINFOList);
+    testDataINFOList.clear();
+//==================================================================
     testDataList.clear();
     testLegend.id = "Legend2";
-    testData.timeStamp = dateTime.fromString("00:00", timeformat).toMSecsSinceEpoch();
+
+    intTime64 = QDateTime::fromString("2021/10/22 00:00:00", timeformat).toMSecsSinceEpoch();
+    testData.timeStamp = intTime64;
+    intTime64 += c;
 //    testData.timeStamp = 0;
     testData.value     = 20;
     testDataList.append(testData);
-    testData.timeStamp = dateTime.fromString("00:01", timeformat).toMSecsSinceEpoch();
+
+    testData.timeStamp = intTime64;
+    intTime64 += c;
 //    testData.timeStamp = 1;
     testData.value     = 5;
     testDataList.append(testData);
-    testData.timeStamp = dateTime.fromString("00:02", timeformat).toMSecsSinceEpoch();
+
+    testData.timeStamp = intTime64;
+    intTime64 += c;
 //    testData.timeStamp = 2;
     testData.value     = 10;
     testDataList.append(testData);
-    testData.timeStamp = dateTime.fromString("00:03", timeformat).toMSecsSinceEpoch();
+
+    testData.timeStamp = intTime64;
+    intTime64 += c;
 //    testData.timeStamp = 3;
     testData.value     = 0;
     testDataList.append(testData);
@@ -79,24 +104,11 @@ MainWindow::MainWindow(QWidget *parent)
     bs.StartDraw();
     connect(timer, SIGNAL(timeout()), this, SLOT(DrawLine()));
 
-    a = QDateTime::fromString("00:04", timeformat);
+    a = QDateTime::fromString("2021/10/22 00:00:00", timeformat);
     b = 4;
 
-//    RangeSlider *rsH = new RangeSlider(Qt::Horizontal, RangeSlider::Option::DoubleHandles, nullptr);
-//    pVLayout->addWidget(rsH);
-
-//    ui->centralwidget->setLayout(bs.pVLayoutLineChart);
     ui->widget->setLayout(bs.pVLayoutLineChart);
 
-//    bs.AddInpLineChartAll();
-//    bs.pLineChartView->setRenderHint(QPainter::Antialiasing);
-//    pVLayout->addWidget(bs.pLineChartView);
-
-
-//    QDateTime dateTime2;
-//    qint64 a = dateTime.toMSecsSinceEpoch();
-//    qDebug() << dateTime2.fromMSecsSinceEpoch(a).toString() << dateTime.toString("hh:mm");
-//    qDebug() << dateTime2.fromMSecsSinceEpoch(a).toString() << dateTime.toString();
 }
 
 MainWindow::~MainWindow()
@@ -108,11 +120,11 @@ void MainWindow::DrawLine()
 {
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
     testDataList.clear();
-    testData.timeStamp = a.toMSecsSinceEpoch();
+    intTime64 += c;
+    testData.timeStamp = intTime64;
 //    testData.timeStamp = b;
-    a = a.addSecs(1);
     b++;
-    testData.value     = qrand() % 30;
+    testData.value = qrand() % 30;
     testDataList.append(testData);
     testDataINFO.values = testDataList;
     testDataINFO.id = "data2";
