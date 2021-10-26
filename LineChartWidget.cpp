@@ -102,6 +102,9 @@ void LineChartWidget::InitXAxisQDateTimeRange(const qint64 &startTime)
         QDateTime::fromMSecsSinceEpoch(displayLower),
         QDateTime::fromMSecsSinceEpoch(displayLower + (qint64)XaxisRange * (qint64)TimeStep * 1000)
     );
+//    iter_XAxisStartShow = pLineSeriesAndIDList->begin();
+//    iter_XAxisEndShow   = pLineSeriesAndIDList->end();
+//    qDebug() << (*max_element(iter_XAxisStartShow,iter_XAxisEndShow));
 }
 
 //时间轴
@@ -113,7 +116,6 @@ void LineChartWidget::XAxisQDateTimeAdaptive(const qint64 &newMaxTime)
         pXaxisStyle->setMax(newMaxTimePoint.addSecs(1 * TimeStep));
         SetXAxisMin();
     }
-    pYaxisStyle->setTickCount(XaxisRange-1);
 //    pXaxisStyle->setTickCount(XaxisRange+1);
 }
 
@@ -174,7 +176,6 @@ void LineChartWidget::SetYAxisStyle()
     pYaxisStyle->setGridLineVisible(true);
     pYaxisStyle->setGridLineColor(QColor(255,255,255,7));
     pYaxisStyle->setTickCount(16);
-    pYaxisStyle->setMinorTickCount(0);
 //    pYaxisStyle->setMinorTickCount(0);
     pLineChart->addAxis(pYaxisStyle, Qt::AlignLeft);//居左
 }
@@ -208,6 +209,7 @@ LineChartWidget::LEGEND_DATA_INFO* LineChartWidget::FindDataID(QString Refer)
     return nullptr;
 }
 
+void LineChartWidget::DataPointToLineSeries(/*QLineSeries*/QList<QPointF>* pLineSeries,const QList<DATA_POINT_t>* inputPointList)
 {
     foreach(DATA_POINT_t DATA_POINT , *inputPointList)
     {
@@ -218,7 +220,9 @@ LineChartWidget::LEGEND_DATA_INFO* LineChartWidget::FindDataID(QString Refer)
 
 void LineChartWidget::AddLineSeriesInLineSeriesAndIDList(QString LegendID, QString DataID, QList<DATA_POINT_t>* DataPointList)
 {
+    /*QLineSeries*/QList<QPointF> *pLineSeries = new /*QLineSeries*/QList<QPointF>();
     DataPointToLineSeries(pLineSeries, DataPointList);
+    LEGEND_DATA_INFO* pLineSeriesIDList = new LEGEND_DATA_INFO(LegendID, DataID/*, pLineSeries*/);
     pLineSeriesAndIDList->append(pLineSeriesIDList);
 }
 

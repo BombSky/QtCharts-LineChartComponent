@@ -186,19 +186,21 @@ public:
     QDateTimeAxis *pXaxisStyle = nullptr;          //时间类型轴(用作X轴)
 //X轴位置指针
 
-//    QList<DATA_POINT_t*> *m_pYAxisLocationRecord;       //从大到小排列的线条数据
-//    QList<DATA_POINT_t*>::iterator iter_XAxisStartShow = m_pYAxisLocationRecord->end();
-//    QList<DATA_POINT_t*>::iterator iter_XAxisEndShow = m_pYAxisLocationRecord->begin();
-//    QList<DATA_POINT_t*>::iterator iter_AddDate;
 //date
     QList<DATA_POINT_t*>* pLineSeriesSize;
     struct LEGEND_DATA_INFO
     {
         QString LegendID;					// 仪器ID;    会有很多重复的仪器ID
         QString DataID;                     // ID;
+//        QLineSeries *pLineSeriesList;
+        QList<QPointF> *pLineSeriesList;
         LEGEND_DATA_INFO
+            (QString  LegendID , QString DataID /*, QLineSeries *pLineSeriesList*/):
+             LegendID(LegendID), DataID (DataID)/*, pLineSeriesList(pLineSeriesList)*/{}
     };
     QList<LEGEND_DATA_INFO*> *pLineSeriesAndIDList;
+    QList<LEGEND_DATA_INFO*>::iterator iter_XAxisStartShow = nullptr;
+    QList<LEGEND_DATA_INFO*>::iterator iter_XAxisEndShow = nullptr;
 //参数
     const AXIS_X_SCALE_e *m_pEcale = nullptr;
     int XaxisRange;
@@ -234,6 +236,7 @@ private:
 
     LEGEND_DATA_INFO *FindDataID(QString Refer);
     QStringList FindLegendList(QString Refer);
+    void DataPointToLineSeries(/*QLineSeries*/QList<QPointF>* pLineSeries,const QList<DATA_POINT_t>* inputPointList);
     void AddLineSeriesInLineSeriesAndIDList(QString LegendID, QString DataID, QList<DATA_POINT_t>* DataPointList);
 
 public slots:
