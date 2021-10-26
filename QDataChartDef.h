@@ -22,6 +22,35 @@ namespace DataChart
 	{	
         qint64 timeStamp;				// 时间戳(横坐标);
 		float value;				// 检测值(纵坐标);
+        bool operator==(struct DATA_POINT_t b) const
+        {
+            return this->value == b.value;
+        }
+
+        bool operator!=(struct DATA_POINT_t b) const
+        {
+            return this->value != b.value;
+        }
+
+        bool operator>=(struct DATA_POINT_t b) const
+        {
+            return this->value >= b.value;
+        }
+
+        bool operator<=(struct DATA_POINT_t b) const
+        {
+            return this->value <= b.value;
+        }
+
+        bool operator>(struct DATA_POINT_t b) const
+        {
+            return this->value > b.value;
+        }
+
+        bool operator<(struct DATA_POINT_t b) const
+        {
+            return this->value < b.value;
+        }
 	};
 
 	struct LEGEND_INFO_t

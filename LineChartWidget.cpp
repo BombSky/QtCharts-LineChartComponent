@@ -102,10 +102,6 @@ void LineChartWidget::InitXAxisQDateTimeRange(const qint64 &startTime)
         QDateTime::fromMSecsSinceEpoch(displayLower),
         QDateTime::fromMSecsSinceEpoch(displayLower + (qint64)XaxisRange * (qint64)TimeStep * 1000)
     );
-//    qDebug() << "Rangelower:" << QDateTime::fromMSecsSinceEpoch(displayLower);
-//    displayLower = displayLower + (qint64)XaxisRange * (qint64)TimeStep * 1000;
-//    qDebug() << "Rangeupper:" << QDateTime::fromMSecsSinceEpoch(1646928000000);
-//    XAxisQDateTimeAdaptive(QDateTime::fromString(startTime, *pTimeFormat ).toMSecsSinceEpoch());
 }
 
 //时间轴
@@ -118,6 +114,7 @@ void LineChartWidget::XAxisQDateTimeAdaptive(const qint64 &newMaxTime)
         SetXAxisMin();
     }
     pYaxisStyle->setTickCount(XaxisRange-1);
+//    pXaxisStyle->setTickCount(XaxisRange+1);
 }
 
 //两轴通用
@@ -169,6 +166,8 @@ void LineChartWidget::SetYAxisStyle()
     pYaxisStyle ->setRange(0, 30);
 //    pYaxisStyle->setMax(30);
 //    pYaxisStyle->setMin(0);
+//    yMax = 30;
+//    yMin = 0;
     pYaxisStyle->setLabelsColor(QColor(255,255,255));
     pYaxisStyle->setLinePenColor(QColor(54,105,115));
     pYaxisStyle->setLabelFormat("%d");
@@ -176,6 +175,7 @@ void LineChartWidget::SetYAxisStyle()
     pYaxisStyle->setGridLineColor(QColor(255,255,255,7));
     pYaxisStyle->setTickCount(16);
     pYaxisStyle->setMinorTickCount(0);
+//    pYaxisStyle->setMinorTickCount(0);
     pLineChart->addAxis(pYaxisStyle, Qt::AlignLeft);//居左
 }
 
@@ -208,22 +208,17 @@ LineChartWidget::LEGEND_DATA_INFO* LineChartWidget::FindDataID(QString Refer)
     return nullptr;
 }
 
-void LineChartWidget::DataPointToLineSeries(QLineSeries* pLineSeries,const QList<DATA_POINT_t>* inputPointList)
 {
     foreach(DATA_POINT_t DATA_POINT , *inputPointList)
     {
         pLineSeries->append(QPointF(DATA_POINT.timeStamp, DATA_POINT.value));
         SetYAxisAdaptive(DATA_POINT);
-        qDebug() << DATA_POINT.timeStamp;
-        qDebug() << QDateTime::fromMSecsSinceEpoch(DATA_POINT.timeStamp).toString();
     }
 }
 
 void LineChartWidget::AddLineSeriesInLineSeriesAndIDList(QString LegendID, QString DataID, QList<DATA_POINT_t>* DataPointList)
 {
-    QLineSeries *pLineSeries = new QLineSeries();
     DataPointToLineSeries(pLineSeries, DataPointList);
-    LEGEND_DATA_INFO* pLineSeriesIDList = new LEGEND_DATA_INFO(LegendID, DataID, pLineSeries);
     pLineSeriesAndIDList->append(pLineSeriesIDList);
 }
 
@@ -235,7 +230,6 @@ QStringList LineChartWidget::FindLegendList(QString Refer)
             LegendVessel.append(i->LegendID);
     return LegendVessel;
 }
-
 
 
 

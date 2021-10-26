@@ -196,10 +196,7 @@ public:
     {
         QString LegendID;					// 仪器ID;    会有很多重复的仪器ID
         QString DataID;                     // ID;
-        QLineSeries *pLineSeriesList;
         LEGEND_DATA_INFO
-            (QString  LegendID , QString DataID , QLineSeries *pLineSeriesList):
-             LegendID(LegendID), DataID (DataID), pLineSeriesList(pLineSeriesList){}
     };
     QList<LEGEND_DATA_INFO*> *pLineSeriesAndIDList;
 //参数
@@ -207,6 +204,8 @@ public:
     int XaxisRange;
     qint64 displayLower;
     qint64 displayupper;
+    qreal yMin;
+    qreal yMax;
     int TimeStep;
     QString *pTimeFormat;
 
@@ -231,11 +230,10 @@ private:
 
     void SetYAxisStyle();
     void SetYAxisAdaptive(DATA_POINT_t &newDATA_POINT);
-//    void AddDateInYAxisLocationRecord(DATA_POINT_t* newDate);
+    void AddDateInYAxisLocationRecord(DATA_POINT_t* newDate);
 
     LEGEND_DATA_INFO *FindDataID(QString Refer);
     QStringList FindLegendList(QString Refer);
-    void DataPointToLineSeries(QLineSeries* pLineSeries,const QList<DATA_POINT_t>* inputPointList);
     void AddLineSeriesInLineSeriesAndIDList(QString LegendID, QString DataID, QList<DATA_POINT_t>* DataPointList);
 
 public slots:
@@ -251,6 +249,18 @@ void LineChartWidget::AddInpLineChartAll(T XAxis)
         pLineChart->addSeries(i->pLineSeriesList);
         i->pLineSeriesList->attachAxis(XAxis);
         i->pLineSeriesList->attachAxis(pYaxisStyle);
+//        connect(i->pLineSeriesList, &QSplineSeries::pointAdded, [=](int index){
+//            qreal y = i->pLineSeriesList->at(index).y();
+
+//            if(y< yMin || y > yMax){
+//                if(y < yMin)
+//                    yMin = y;
+//                if(y> yMax)
+//                    yMax = y;
+//             pYaxisStyle->setRange(yMin, yMax);
+//            }
+
+//           });
     }
 }
 
