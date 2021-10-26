@@ -63,7 +63,7 @@ bool LineChartWidget::InitData(const QString& strLegendId, const QList<DATA_INFO
 //    lstDataInfos.begin()->values.begin();
     //设置画幅结束点
 
-    InitXAxisQDateTimeRange(lstDataInfos.begin()->values.begin()->timeStamp);
+    InitXAxisQDateTimeRange(lstDataInfos.begin()->values.begin()->timeStamp, lstDataInfos.last().values.last().timeStamp);
     return true;
 }
 
@@ -72,8 +72,7 @@ bool LineChartWidget::AppendData(const QString& strLegendId, const QString& strD
     LEGEND_DATA_INFO* i = FindDataID(strDataId);
     if(i == nullptr)
         return false;
-    QLineSeries *pLineSeries = i->pLineSeriesList;
-    DataPointToLineSeries(pLineSeries, &lstDataValues);
+    DataPointToLineSeries(i->pLineSeries, i->pLineSeriesPointList, &lstDataValues);
     if (AXIS_X_SCALE_INT == *m_pEcale)
     {
         XAxisIntAdqptive(lstDataValues.begin()->timeStamp);

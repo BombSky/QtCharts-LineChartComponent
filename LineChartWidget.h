@@ -192,11 +192,11 @@ public:
     {
         QString LegendID;					// 仪器ID;    会有很多重复的仪器ID
         QString DataID;                     // ID;
-//        QLineSeries *pLineSeriesList;
-        QList<QPointF> *pLineSeriesList;
+        QLineSeries *pLineSeries;
+        QList<QPointF> *pLineSeriesPointList;
         LEGEND_DATA_INFO
-            (QString  LegendID , QString DataID /*, QLineSeries *pLineSeriesList*/):
-             LegendID(LegendID), DataID (DataID)/*, pLineSeriesList(pLineSeriesList)*/{}
+            (QString  LegendID , QString DataID , QLineSeries *pLineSeries,     QList<QPointF> *pLineSeriesPointList):
+             LegendID(LegendID), DataID (DataID), pLineSeries(pLineSeries), pLineSeriesPointList(pLineSeriesPointList) {}
     };
     QList<LEGEND_DATA_INFO*> *pLineSeriesAndIDList;
     QList<LEGEND_DATA_INFO*>::iterator iter_XAxisStartShow = nullptr;
@@ -206,8 +206,10 @@ public:
     int XaxisRange;
     qint64 displayLower;
     qint64 displayupper;
-    qreal yMin;
-    qreal yMax;
+//    qreal yMin;
+//    qreal yMax;
+    float m_maxValue;
+    float m_minValue;
     int TimeStep;
     QString *pTimeFormat;
 
@@ -225,18 +227,19 @@ private:
     void XAxisIntAdqptive(const qint64 &newMaxTime);
 
     void SetXAxisQDateTimeType();
-    void InitXAxisQDateTimeRange(const qint64 &startTime);
+    void InitXAxisQDateTimeRange(const qint64 &startTime, const qint64 &lastTime);
     void XAxisQDateTimeAdaptive(const qint64 &newMaxTime);
 
     void SetXAxisMin();
 
     void SetYAxisStyle();
-    void SetYAxisAdaptive(DATA_POINT_t &newDATA_POINT);
+    void SetYAxisAdaptive();
+    void setLineMaxAndMin();
     void AddDateInYAxisLocationRecord(DATA_POINT_t* newDate);
 
     LEGEND_DATA_INFO *FindDataID(QString Refer);
     QStringList FindLegendList(QString Refer);
-    void DataPointToLineSeries(/*QLineSeries*/QList<QPointF>* pLineSeries,const QList<DATA_POINT_t>* inputPointList);
+    void DataPointToLineSeries(QLineSeries* pLineSeries, QList<QPointF> *pThisLineSeriesPointList,const QList<DATA_POINT_t>* inputPointList);
     void AddLineSeriesInLineSeriesAndIDList(QString LegendID, QString DataID, QList<DATA_POINT_t>* DataPointList);
 
 public slots:
@@ -249,9 +252,9 @@ void LineChartWidget::AddInpLineChartAll(T XAxis)
 {
     foreach(LEGEND_DATA_INFO* i , *pLineSeriesAndIDList)
     {
-        pLineChart->addSeries(i->pLineSeriesList);
-        i->pLineSeriesList->attachAxis(XAxis);
-        i->pLineSeriesList->attachAxis(pYaxisStyle);
+        pLineChart->addSeries(i->pLineSeries);
+        i->pLineSeries->attachAxis(XAxis);
+        i->pLineSeries->attachAxis(pYaxisStyle);
 //        connect(i->pLineSeriesList, &QSplineSeries::pointAdded, [=](int index){
 //            qreal y = i->pLineSeriesList->at(index).y();
 

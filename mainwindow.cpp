@@ -26,14 +26,14 @@ MainWindow::MainWindow(QWidget *parent)
     c = 1000;
     testLegend.id = "Legend1";
     testData.timeStamp = intTime64;
-    qDebug() << "inMain:" << QDateTime::fromMSecsSinceEpoch(intTime64);
+//    qDebug() << "inMain:" << QDateTime::fromMSecsSinceEpoch(intTime64);
 //    testData.timeStamp = 0;
     testData.value     = 0;
     testDataList.append(testData);
 
     intTime64 += c;
     testData.timeStamp = intTime64;
-    qDebug() << "inMain:" << QDateTime::fromMSecsSinceEpoch(intTime64);
+//    qDebug() << "inMain:" << QDateTime::fromMSecsSinceEpoch(intTime64);
 //    testData.timeStamp = 1;
     testData.value     = 10;
     testDataList.append(testData);
@@ -42,14 +42,14 @@ MainWindow::MainWindow(QWidget *parent)
     intTime64 += c;
     testData.timeStamp = intTime64;
     intTime64 += c;
-    qDebug() << "inMain:" << QDateTime::fromMSecsSinceEpoch(intTime64);
+//    qDebug() << "inMain:" << QDateTime::fromMSecsSinceEpoch(intTime64);
 //    testData.timeStamp = 2;
     testData.value     = 5;
     testDataList.append(testData);
 
     testData.timeStamp = intTime64;
     intTime64 += c;
-    qDebug() << "inMain:" << QDateTime::fromMSecsSinceEpoch(intTime64);
+//    qDebug() << "inMain:" << QDateTime::fromMSecsSinceEpoch(intTime64);
 //    testData.timeStamp = 3;
     testData.value     = 20;
     testDataList.append(testData);

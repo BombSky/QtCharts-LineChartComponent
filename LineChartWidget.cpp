@@ -83,7 +83,8 @@ void LineChartWidget::XAxisIntAdqptive(const qint64 &newMaxTime)
     if(newMaxTime >= pValueXaxisStyle->max())
     {
         pValueXaxisStyle->setMax(newMaxTime + 1);
-        SetXAxisMin();
+//        SetXAxisMin();
+        pValueXaxisStyle->setMin(pValueXaxisStyle->max()-XaxisRange);
     }
 }
 
@@ -94,28 +95,31 @@ void LineChartWidget::SetXAxisQDateTimeType()
     pXaxisStyle->setFormat(*pTimeFormat);
 }
 
-void LineChartWidget::InitXAxisQDateTimeRange(const qint64 &startTime)
+void LineChartWidget::InitXAxisQDateTimeRange(const qint64 &startTime, const qint64 &lastTime)
 {
     displayLower = startTime;
+    displayupper = lastTime;
+    SetYAxisAdaptive();
     pXaxisStyle->setRange
     (
         QDateTime::fromMSecsSinceEpoch(displayLower),
         QDateTime::fromMSecsSinceEpoch(displayLower + (qint64)XaxisRange * (qint64)TimeStep * 1000)
     );
-//    iter_XAxisStartShow = pLineSeriesAndIDList->begin();
-//    iter_XAxisEndShow   = pLineSeriesAndIDList->end();
-//    qDebug() << (*max_element(iter_XAxisStartShow,iter_XAxisEndShow));
 }
 
 //时间轴
 void LineChartWidget::XAxisQDateTimeAdaptive(const qint64 &newMaxTime)
 {
-    QDateTime newMaxTimePoint = QDateTime::fromMSecsSinceEpoch(newMaxTime);
-    if (newMaxTimePoint >= pXaxisStyle->max())
+    displayupper = newMaxTime;
+    qDebug() << "time axis adaptive: " << "displayupper:" << displayupper << "displayLower:" << displayLower;
+    if (newMaxTime >= pXaxisStyle->max().toMSecsSinceEpoch())
     {
-        pXaxisStyle->setMax(newMaxTimePoint.addSecs(1 * TimeStep));
-        SetXAxisMin();
+        displayLower = newMaxTime - (qint64)XaxisRange * (qint64)TimeStep * 1000;
+        pXaxisStyle->setMax(QDateTime::fromMSecsSinceEpoch(displayupper));
+//        SetXAxisMin();
+        pXaxisStyle->setMin(QDateTime::fromMSecsSinceEpoch(displayLower));
     }
+    SetYAxisAdaptive();
 //    pXaxisStyle->setTickCount(XaxisRange+1);
 }
 
@@ -123,12 +127,12 @@ void LineChartWidget::XAxisQDateTimeAdaptive(const qint64 &newMaxTime)
 void LineChartWidget::SetXAxisMin()
 {
     //int轴模式
-    if (AXIS_X_SCALE_INT == *m_pEcale)
-        pValueXaxisStyle->setMin(pValueXaxisStyle->max()-XaxisRange);
+//    if (AXIS_X_SCALE_INT == *m_pEcale)
+//        pValueXaxisStyle->setMin(pValueXaxisStyle->max()-XaxisRange);
 
     //时间轴模式
-    else
-        pXaxisStyle->setMin(pXaxisStyle->max().addSecs(-XaxisRange * TimeStep));
+//    else
+//        pXaxisStyle->setMin(pXaxisStyle->max().addSecs(-XaxisRange * TimeStep));
 }
 
 //两轴通用
@@ -170,6 +174,7 @@ void LineChartWidget::SetYAxisStyle()
 //    pYaxisStyle->setMin(0);
 //    yMax = 30;
 //    yMin = 0;
+    SetYAxisAdaptive();
     pYaxisStyle->setLabelsColor(QColor(255,255,255));
     pYaxisStyle->setLinePenColor(QColor(54,105,115));
     pYaxisStyle->setLabelFormat("%d");
@@ -180,24 +185,10 @@ void LineChartWidget::SetYAxisStyle()
     pLineChart->addAxis(pYaxisStyle, Qt::AlignLeft);//居左
 }
 
-void LineChartWidget::SetYAxisAdaptive(DATA_POINT_t &newDATA_POINT)
+void LineChartWidget::SetYAxisAdaptive()
 {
-//    if (YaxisMax < newDATA_POINT.value)
-//    {
-//        pYaxisStyle->setMax(newDATA_POINT.value);
-//        YaxisMax = newDATA_POINT.value;
-//    }
-//    else if (YaxisMin > newDATA_POINT.value)
-//    {
-//        pYaxisStyle->setMin(newDATA_POINT.value);
-//        YaxisMin = newDATA_POINT.value - 2;
-//    }
-//    pYaxisStyle = qobject_cast<QValueAxis *>(pLineChart->axes(Qt::Vertical).at(0));
-//    pYaxisStyle->setMax(pYaxisStyle->max() * 1.01);
-//    pYaxisStyle->setMin(pYaxisStyle->min() * 0.99);
-
-
-
+    setLineMaxAndMin();
+    pYaxisStyle ->setRange(m_minValue, m_maxValue);
 }
 
 LineChartWidget::LEGEND_DATA_INFO* LineChartWidget::FindDataID(QString Refer)
@@ -209,20 +200,23 @@ LineChartWidget::LEGEND_DATA_INFO* LineChartWidget::FindDataID(QString Refer)
     return nullptr;
 }
 
-void LineChartWidget::DataPointToLineSeries(/*QLineSeries*/QList<QPointF>* pLineSeries,const QList<DATA_POINT_t>* inputPointList)
+void LineChartWidget::DataPointToLineSeries(QLineSeries* pLineSeries, QList<QPointF> *pThisLineSeriesPointList,const QList<DATA_POINT_t>* inputPointList)
 {
+    QPointF *newPointF;
     foreach(DATA_POINT_t DATA_POINT , *inputPointList)
     {
-        pLineSeries->append(QPointF(DATA_POINT.timeStamp, DATA_POINT.value));
-        SetYAxisAdaptive(DATA_POINT);
+        newPointF = new QPointF(DATA_POINT.timeStamp, DATA_POINT.value);
+        pLineSeries->append(*newPointF);
+        pThisLineSeriesPointList->append(*newPointF);
     }
 }
 
 void LineChartWidget::AddLineSeriesInLineSeriesAndIDList(QString LegendID, QString DataID, QList<DATA_POINT_t>* DataPointList)
 {
-    /*QLineSeries*/QList<QPointF> *pLineSeries = new /*QLineSeries*/QList<QPointF>();
-    DataPointToLineSeries(pLineSeries, DataPointList);
-    LEGEND_DATA_INFO* pLineSeriesIDList = new LEGEND_DATA_INFO(LegendID, DataID/*, pLineSeries*/);
+    QLineSeries *pLineSeries = new QLineSeries();
+    QList<QPointF> *pLineSeriesPointList = new QList<QPointF>;
+    DataPointToLineSeries(pLineSeries, pLineSeriesPointList, DataPointList);
+    LEGEND_DATA_INFO* pLineSeriesIDList = new LEGEND_DATA_INFO(LegendID, DataID, pLineSeries, pLineSeriesPointList);
     pLineSeriesAndIDList->append(pLineSeriesIDList);
 }
 
@@ -235,8 +229,54 @@ QStringList LineChartWidget::FindLegendList(QString Refer)
     return LegendVessel;
 }
 
-
-
+void LineChartWidget::setLineMaxAndMin()
+{
+    float maxValue = 0;
+    float minValue = 0;
+    QList<QPointF>::Iterator j;
+    foreach (LEGEND_DATA_INFO *i, *pLineSeriesAndIDList)
+    {
+        j = i->pLineSeriesPointList->begin();
+        qDebug() << "1.displayupper: " << displayupper << " " << (qint64)j->x();
+        while (i->pLineSeriesPointList->end() != j && displayupper != (qint64)j->x())
+        {
+            qDebug() << "2.displayLower: " << displayLower << " " << (qint64)j->x();
+            if (displayLower == (qint64)j->x())
+            {
+                while(i->pLineSeriesPointList->end() != j && displayupper != (qint64)j->x())
+                {
+                    qDebug() << j->y();
+                    if(maxValue < j->y())
+                    {
+                        maxValue = (qint64)j->y();
+                    }
+                    else if(minValue > j->y())
+                    {
+                        minValue = (qint64)j->y();
+                    }
+                    qDebug() << displayupper << " " << (qint64)j->x();
+//                    if (displayupper != (qint64)j->x())
+                    ++j;
+                }
+                if (i->pLineSeriesPointList->end() == j) break;
+                qDebug() << j->y();
+                if(maxValue < j->y())
+                {
+                    maxValue = (qint64)j->y();
+                }
+                else if(minValue > j->y())
+                {
+                    minValue = (qint64)j->y();
+                }
+                qDebug() << displayupper << " " << (qint64)j->x();
+            }
+            if (displayupper != (qint64)j->x()) ++j;
+        }
+    }
+    qDebug() << QDateTime::fromMSecsSinceEpoch(displayLower);
+    m_maxValue = maxValue;
+    m_minValue = minValue;
+}
 
 
 
