@@ -203,14 +203,14 @@ public:
     QList<LEGEND_DATA_INFO*>::iterator iter_XAxisEndShow = nullptr;
 //参数
     const AXIS_X_SCALE_e *m_pEcale = nullptr;
-    int XaxisRange;
+    qint64 XaxisRange;
     qint64 displayLower;
     qint64 displayupper;
 //    qreal yMin;
 //    qreal yMax;
     float m_maxValue;
     float m_minValue;
-    int TimeStep;
+    qint64 TimeStep;
     QString *pTimeFormat;
 
 
@@ -235,6 +235,8 @@ private:
     void SetYAxisStyle();
     void SetYAxisAdaptive();
     void setLineMaxAndMin();
+    void setLineMax();
+    void setLineMin();
     void AddDateInYAxisLocationRecord(DATA_POINT_t* newDate);
 
     LEGEND_DATA_INFO *FindDataID(QString Refer);
