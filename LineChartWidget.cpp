@@ -5,7 +5,7 @@ using namespace std;
 
 LineChartWidget::LineChartWidget()
 {
-//    connect(pRangeXAxisControlTwoSpinBox, &RangeSlider::lowerValueChanged, this, &LineChartWidget::SetXAxisMin);
+//    connect(pRangeXAxisControlTwoSpinBox, &RangeSlider::lowerValueChanged, this, &LineChartWidget::InItRangeXAxisControlTwoSpinBox);
     pLineChart     = new QChart;
     pLineChartView = new QChartView(pLineChart);
     pTimeFormat    = new QString;
@@ -15,7 +15,7 @@ LineChartWidget::LineChartWidget()
     *pTimeFormat = "yyyy/MM/dd hh:mm:ss";
 //    m_pEcale                              在SetXAxisScale唯一取外部对象地址
 //    InItLineChart();                      在SetXAxisScale唯一调用
-//    InItRangeXAxisControlTwoSpinBox();    在SetXAxisScale唯一调用
+//    InItRangeXAxisControlTwoSpinBox();    //在SetXAxisScale唯一调用
 }
 
 
@@ -98,82 +98,62 @@ void LineChartWidget::SetXAxisQDateTimeType()
 void LineChartWidget::InitXAxisQDateTimeRange(const qint64 &startTime, const qint64 &lastTime)
 {
     displayLower = startTime;
-    displayupper = lastTime;
-    SetYAxisAdaptive();
-    pXaxisStyle->setRange
-    (
-        QDateTime::fromMSecsSinceEpoch(displayLower),
-        QDateTime::fromMSecsSinceEpoch(displayLower + (qint64)XaxisRange * (qint64)TimeStep * 1000)
-    );
+    lineMinTime = displayLower;
+    SetXaxisRange(10);
+    if(lastTime > (displayLower + XaxisRange * TimeStep * 1000))
+        displayupper = lastTime;
+    else
+        lineMaxTime = displayLower + XaxisRange * TimeStep * 1000;
+    displayupper = lineMaxTime;
+    XAxisUpdate();
 }
 
 //时间轴
-void LineChartWidget::XAxisQDateTimeAdaptive(const qint64 &newMaxTime)
+void LineChartWidget::XAxisQDateTimeAdaptive()
 {
-    displayupper = newMaxTime;
-//    qDebug() << "time axis adaptive: " << "displayupper:" << displayupper << "displayLower:" << displayLower;
-    if (newMaxTime >= pXaxisStyle->max().toMSecsSinceEpoch())
-    {
-        displayLower = newMaxTime - XaxisRange * TimeStep * 1000;
-        pXaxisStyle->setMax(QDateTime::fromMSecsSinceEpoch(displayupper + TimeStep * 1000));
-//        SetXAxisMin();
-        pXaxisStyle->setMin(QDateTime::fromMSecsSinceEpoch(displayLower));
-    }
+    pXaxisStyle->setMin(QDateTime::fromMSecsSinceEpoch(displayLower));
+    pXaxisStyle->setMax(QDateTime::fromMSecsSinceEpoch(displayupper));
     SetYAxisAdaptive();
-//    pXaxisStyle->setTickCount(XaxisRange+1);
-}
-
-//两轴通用
-void LineChartWidget::SetXAxisMin()
-{
-    //int轴模式
-    if (AXIS_X_SCALE_INT == *m_pEcale)
-        pValueXaxisStyle->setMin(pValueXaxisStyle->max()-XaxisRange);
-
-    //时间轴模式
-    else
-        pXaxisStyle->setMin(pXaxisStyle->max().addSecs(-XaxisRange * TimeStep));
 }
 
 //两轴通用
 void LineChartWidget::SetXaxisRange(int rangInt)
 {
+//    qDebug() << (displayupper - displayLower) / TimeStep / 1000;
     XaxisRange = rangInt;
-    SetXAxisMin();
+//    SetXAxisMin();
+}
+
+void LineChartWidget::XAxisUpdate()
+{
+    qint64 a = lineMaxTime - displayupper;
+    displayupper += a;
+    displayLower += a;
+    XAxisQDateTimeAdaptive();
 }
 
 void LineChartWidget::SetLowerXAxis(int percent)
 {
-//    double a = percent;
-//    a = -(a / 100);
-//    if(100 != percent)
-//    {
-//        XaxisStyle->setMin(XaxisStyle->max());
-//    }
-//    qDebug() << a;
-//    SetXaxisRange(percent);
-    qDebug() << percent;
+    qint64 overallLength = lineMaxTime - lineMinTime;
+    float percentF = ((float)percent / (float)100);
+    qint64 b = (overallLength * percentF);
+    qDebug() << b;
+    displayLower = lineMinTime + b;
+    XAxisQDateTimeAdaptive();
 }
 
 void LineChartWidget::SetUpperXAxis(int percent)
 {
-    qDebug() << percent;
-//    if(100 != percent)
-//    {
-
-//    }
+    qint64 overallLength = lineMaxTime - lineMinTime;
+    qint64 b = overallLength * (((float)100 - (float)percent) / (float)100);
+    displayupper = lineMaxTime - b;
+    XAxisQDateTimeAdaptive();
 }
 
 //Y轴
 void LineChartWidget::SetYAxisStyle()
 {
     pYaxisStyle = new QValueAxis;
-
-    pYaxisStyle ->setRange(0, 30);
-//    pYaxisStyle->setMax(30);
-//    pYaxisStyle->setMin(0);
-//    yMax = 30;
-//    yMin = 0;
     SetYAxisAdaptive();
     pYaxisStyle->setLabelsColor(QColor(255,255,255));
     pYaxisStyle->setLinePenColor(QColor(54,105,115));

@@ -78,7 +78,9 @@ bool LineChartWidget::AppendData(const QString& strLegendId, const QString& strD
         XAxisIntAdqptive(lstDataValues.begin()->timeStamp);
         return true;
     }
-    XAxisQDateTimeAdaptive(lstDataValues.begin()->timeStamp);
+    if (lineMaxTime < lstDataValues.last().timeStamp)
+        lineMaxTime = lstDataValues.last().timeStamp;
+    XAxisUpdate();
     return true;
 }
 void LineChartWidget::DeleteData(const QString& strLegendId, const QString strDataId)
