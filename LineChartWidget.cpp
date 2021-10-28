@@ -137,7 +137,7 @@ void LineChartWidget::SetLowerXAxis(int percent)
     qint64 overallLength = lineMaxTime - lineMinTime;
     float percentF = ((float)percent / (float)100);
     qint64 b = (overallLength * percentF);
-    qDebug() << b;
+    qDebug() << percent;
     displayLower = lineMinTime + b;
     XAxisQDateTimeAdaptive();
 }
@@ -146,6 +146,7 @@ void LineChartWidget::SetUpperXAxis(int percent)
 {
     qint64 overallLength = lineMaxTime - lineMinTime;
     qint64 b = overallLength * (((float)100 - (float)percent) / (float)100);
+    qDebug() << percent;
     displayupper = lineMaxTime - b;
     XAxisQDateTimeAdaptive();
 }
@@ -168,6 +169,7 @@ void LineChartWidget::SetYAxisStyle()
 void LineChartWidget::SetYAxisAdaptive()
 {
     setLineMaxAndMin();
+    qDebug() << m_minValue << m_maxValue << displayLower << displayupper;
     pYaxisStyle ->setRange(m_minValue, m_maxValue);
 }
 
