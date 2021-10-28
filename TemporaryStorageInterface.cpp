@@ -78,9 +78,13 @@ bool LineChartWidget::AppendData(const QString& strLegendId, const QString& strD
         XAxisIntAdqptive(lstDataValues.begin()->timeStamp);
         return true;
     }
+<<<<<<< HEAD
     if (lineMaxTime < lstDataValues.last().timeStamp)
         lineMaxTime = lstDataValues.last().timeStamp;
     XAxisQDateTimeAdaptive();
+=======
+    XAxisQDateTimeAdaptive(lstDataValues.begin()->timeStamp);
+>>>>>>> parent of 72e41c4 (sati)
     return true;
 }
 void LineChartWidget::DeleteData(const QString& strLegendId, const QString strDataId)

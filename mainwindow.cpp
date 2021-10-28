@@ -103,7 +103,6 @@ MainWindow::MainWindow(QWidget *parent)
     testDataList.clear();
     bs.StartDraw();
     connect(timer, SIGNAL(timeout()), this, SLOT(DrawLine()));
-    connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(timePushButton()));
 
     a = QDateTime::fromString("2021/10/22 00:00:00", timeformat);
     b = 4;
@@ -138,19 +137,4 @@ void MainWindow::setRange()
 {
 }
 
-
-
-void MainWindow::timePushButton()
-{
-    if(ui->pushButton->text() == "STOP")
-    {
-        timer->stop();
-        ui->pushButton->setText("START");
-    }
-    else
-    {
-        timer->start();
-        ui->pushButton->setText("STOP");
-    }
-}
 

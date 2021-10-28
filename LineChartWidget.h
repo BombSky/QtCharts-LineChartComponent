@@ -199,18 +199,19 @@ public:
              LegendID(LegendID), DataID (DataID), pLineSeries(pLineSeries), pLineSeriesPointList(pLineSeriesPointList) {}
     };
     QList<LEGEND_DATA_INFO*> *pLineSeriesAndIDList;
+    QList<LEGEND_DATA_INFO*>::iterator iter_XAxisStartShow = nullptr;
+    QList<LEGEND_DATA_INFO*>::iterator iter_XAxisEndShow = nullptr;
 //参数
-    qint64 XaxisRange;          //显示起始点与终点之差
-    qint64 lineMinTime;         //整条数据的起点
-    qint64 lineMaxTime;         //整条数据的终点
-    qint64 displayLower;        //显示的起点
-    qint64 displayupper;        //显示的终点
-    qint64 TimeStep;            //轴刻度间隔
-
-    float m_maxValue;           //折线最大值
-    float m_minValue;           //折线最小值
     const AXIS_X_SCALE_e *m_pEcale = nullptr;
-    QString *pTimeFormat;       //X轴显示格式
+    qint64 XaxisRange;
+    qint64 displayLower;
+    qint64 displayupper;
+//    qreal yMin;
+//    qreal yMax;
+    float m_maxValue;
+    float m_minValue;
+    qint64 TimeStep;
+    QString *pTimeFormat;
 
 
     template<typename T>void AddInpLineChartAll(T XAxis);
@@ -227,8 +228,9 @@ private:
 
     void SetXAxisQDateTimeType();
     void InitXAxisQDateTimeRange(const qint64 &startTime, const qint64 &lastTime);
-    void XAxisQDateTimeAdaptive();
-    void XAxisUpdate();
+    void XAxisQDateTimeAdaptive(const qint64 &newMaxTime);
+
+    void SetXAxisMin();
 
     void SetYAxisStyle();
     void SetYAxisAdaptive();
@@ -257,6 +259,7 @@ void LineChartWidget::AddInpLineChartAll(T XAxis)
         i->pLineSeries->attachAxis(pYaxisStyle);
 //        connect(i->pLineSeriesList, &QSplineSeries::pointAdded, [=](int index){
 //            qreal y = i->pLineSeriesList->at(index).y();
+
 //            if(y< yMin || y > yMax){
 //                if(y < yMin)
 //                    yMin = y;
@@ -264,6 +267,7 @@ void LineChartWidget::AddInpLineChartAll(T XAxis)
 //                    yMax = y;
 //             pYaxisStyle->setRange(yMin, yMax);
 //            }
+
 //           });
     }
 }

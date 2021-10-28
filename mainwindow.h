@@ -22,8 +22,6 @@ private slots:
     void DrawLine();
     void setRange();
 
-    void timePushButton();
-
 private:
     QTimer *timer;
     int b, c;
