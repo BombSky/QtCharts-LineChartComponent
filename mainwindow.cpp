@@ -146,11 +146,15 @@ void MainWindow::timePushButton()
     {
         timer->stop();
         ui->pushButton->setText("START");
+        bs.ChangeLineSeriesColor("data2",QColor(00,211,255));
     }
     else
     {
         timer->start();
         ui->pushButton->setText("STOP");
+        bs.ChangeLineSeriesColor("data2",QColor(255,211,255));
     }
+//    (ui->pushButton->text() == "STOP") ? timer->stop() : timer->start();
+//    (ui->pushButton->text() == "STOP") ? ui->pushButton->setText("START") : timer->start();
 }
 

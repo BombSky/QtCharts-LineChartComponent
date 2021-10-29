@@ -69,6 +69,9 @@ public:
     *			false: 初始化失败或图形控件中不存在该图例ID;
     */
     virtual bool InitData(const QString& strLegendId, const QList<DATA_INFO_t>& lstDataInfos);
+    virtual bool InitData(const QString& strLegendId, const QList<DATA_INFO_t>& lstDataInfos, const QColor &InItLineSeriesColor);
+
+    virtual bool ChangeLineSeriesColor(const QString& strDataId, const QColor &LineSeriesColor);
 
     /**
     * @brief	向图形控件中的图例追加新数据;
@@ -224,6 +227,7 @@ private:
 
     void SetXAxisIntType();
     void XAxisIntAdqptive(const qint64 &newMaxTime);
+    void refreshLowSliderLocation();
 
     void SetXAxisQDateTimeType();
     void InitXAxisQDateTimeRange(const qint64 &startTime, const qint64 &lastTime);
@@ -241,6 +245,7 @@ private:
     QStringList FindLegendList(QString Refer);
     void DataPointToLineSeries(QLineSeries* pLineSeries, QList<QPointF> *pThisLineSeriesPointList,const QList<DATA_POINT_t>* inputPointList);
     void AddLineSeriesInLineSeriesAndIDList(QString LegendID, QString DataID, QList<DATA_POINT_t>* DataPointList);
+    void AddLineSeriesInLineSeriesAndIDList(QString LegendID, QString DataID, QList<DATA_POINT_t>* DataPointList, const QColor &InItLineSeriesColor);
 
 public slots:
     void SetLowerXAxis(int percent);

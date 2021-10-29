@@ -59,12 +59,32 @@ bool LineChartWidget::InitData(const QString& strLegendId, const QList<DATA_INFO
     //添加
     foreach(DATA_INFO_t DATA_INFO , lstDataInfos)
         AddLineSeriesInLineSeriesAndIDList(strLegendId, DATA_INFO.id, &DATA_INFO.values);
-    //设置画幅起始点
-//    lstDataInfos.begin()->values.begin();
-    //设置画幅结束点
 
     InitXAxisQDateTimeRange(lstDataInfos.begin()->values.begin()->timeStamp, lstDataInfos.last().values.last().timeStamp);
     return true;
+}
+
+bool LineChartWidget::InitData(const QString& strLegendId, const QList<DATA_INFO_t>& lstDataInfos, const QColor &InItLineSeriesColor)
+{
+    //清理
+    pLineSeriesAndIDList->clear();
+    //添加
+    foreach(DATA_INFO_t DATA_INFO , lstDataInfos)
+        AddLineSeriesInLineSeriesAndIDList(strLegendId, DATA_INFO.id, &DATA_INFO.values, InItLineSeriesColor);
+
+    InitXAxisQDateTimeRange(lstDataInfos.begin()->values.begin()->timeStamp, lstDataInfos.last().values.last().timeStamp);
+    return true;
+}
+
+bool LineChartWidget::ChangeLineSeriesColor(const QString& strDataId,const QColor &LineSeriesColor)
+{
+    LEGEND_DATA_INFO* a = FindDataID(strDataId);
+    if (nullptr != a)
+    {
+        a->pLineSeries->setColor(LineSeriesColor);
+        return true;
+    }
+    return false;
 }
 
 bool LineChartWidget::AppendData(const QString& strLegendId, const QString& strDataId, const QList<DATA_POINT_t>& lstDataValues)
@@ -115,7 +135,11 @@ void LineChartWidget::SetXAxisScale(const DataChart::AXIS_X_SCALE_e ecale)
 void LineChartWidget::SetInteractive(const bool bEnable)
 {}
 QImage LineChartWidget::SaveImage()
-{}
+{
+    QScreen *screen=QGuiApplication::primaryScreen();
+    QPixmap pixmap=screen->grabWindow(pLineChartView->winId());
+
+}
 void LineChartWidget::RestoreDefault()
 {}
 QString LineChartWidget::GetLastError()

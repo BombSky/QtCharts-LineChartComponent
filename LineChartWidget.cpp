@@ -113,7 +113,14 @@ void LineChartWidget::XAxisQDateTimeAdaptive()
 {
     pXaxisStyle->setMin(QDateTime::fromMSecsSinceEpoch(displayLower));
     pXaxisStyle->setMax(QDateTime::fromMSecsSinceEpoch(displayupper));
+    refreshLowSliderLocation();
     SetYAxisAdaptive();
+}
+
+void LineChartWidget::refreshLowSliderLocation()
+{
+    qint64 a = displayLower - lineMinTime;
+//    pRangeXAxisControlTwoSpinBox->SetLowerValue(a / (TimeStep * 1000));
 }
 
 //两轴通用
@@ -138,7 +145,7 @@ void LineChartWidget::SetLowerXAxis(int percent)
     float percentF = ((float)percent / (float)100);
     qint64 b = (overallLength * percentF);
     b = b / TimeStep / 1000;
-    qDebug() << b;
+//    qDebug() << b;
     displayLower = lineMinTime + b * 1000;
     XAxisQDateTimeAdaptive();
 }
@@ -197,6 +204,16 @@ void LineChartWidget::DataPointToLineSeries(QLineSeries* pLineSeries, QList<QPoi
 void LineChartWidget::AddLineSeriesInLineSeriesAndIDList(QString LegendID, QString DataID, QList<DATA_POINT_t>* DataPointList)
 {
     QLineSeries *pLineSeries = new QLineSeries();
+    QList<QPointF> *pLineSeriesPointList = new QList<QPointF>;
+    DataPointToLineSeries(pLineSeries, pLineSeriesPointList, DataPointList);
+    LEGEND_DATA_INFO* pLineSeriesIDList = new LEGEND_DATA_INFO(LegendID, DataID, pLineSeries, pLineSeriesPointList);
+    pLineSeriesAndIDList->append(pLineSeriesIDList);
+}
+
+void LineChartWidget::AddLineSeriesInLineSeriesAndIDList(QString LegendID, QString DataID, QList<DATA_POINT_t>* DataPointList, const QColor &InItLineSeriesColor)
+{
+    QLineSeries *pLineSeries = new QLineSeries();
+    pLineSeries->setColor(InItLineSeriesColor);
     QList<QPointF> *pLineSeriesPointList = new QList<QPointF>;
     DataPointToLineSeries(pLineSeries, pLineSeriesPointList, DataPointList);
     LEGEND_DATA_INFO* pLineSeriesIDList = new LEGEND_DATA_INFO(LegendID, DataID, pLineSeries, pLineSeriesPointList);

@@ -64,6 +64,26 @@ public:
 	*			false: 初始化失败或图形控件中不存在该图例ID;
 	*/
 	virtual bool InitData(const QString& strLegendId, const QList<DATA_INFO_t>& lstDataInfos) = 0;
+    /**
+    * @brief	实始化图形控件中的图例数据;
+    * @note		如果图形控件口已经存在相同图例ID，则替换原图例中已存在的数据;
+    * @param	strLegendId: [in]，图例的ID;
+    * @param	lstDataInfos: [in]，该图例的数据信息列表，包含基本信息及数据列表;
+    * @param	LineSeriesColor: [in]，所需要刷新的颜色;
+    * @return	true: 初始化成功;
+    *			false: 初始化失败或图形控件中不存在该图例ID;
+    */
+    virtual bool InitData(const QString& strLegendId, const QList<DATA_INFO_t>& lstDataInfos, const QColor &InItLineSeriesColor) = 0;
+
+    /**
+    * @brief	修改折线颜色;
+    * @note		如果有相应的lineseries替换原来的颜色，如果没有则返回false;
+    * @param	strDataId: [in]，需要刷新数据的ID;
+    * @param	LineSeriesColor: [in]，所需要刷新的颜色;
+    * @return	true: 修改成功;
+    *			false: 修改失败;
+    */
+    virtual bool ChangeLineSeriesColor(const QString& strDataId, const QColor &LineSeriesColor) = 0;
 
 	/**
 	* @brief	向图形控件中的图例追加新数据;
