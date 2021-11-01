@@ -119,7 +119,13 @@ void LineChartWidget::XAxisQDateTimeAdaptive()
 
 void LineChartWidget::refreshLowSliderLocation()
 {
-    qint64 a = displayLower - lineMinTime;
+    float a = (float)(displayLower - lineMinTime) / (float)(lineMaxTime - lineMinTime);
+    qDebug() << (int)(a*100);
+    pRangeXAxisControlTwoSpinBox->blockChangedSignalSetLowerValue((int)(a*100));
+//    qDebug() << (displayLower - lineMinTime) << (lineMaxTime - lineMinTime);
+//    qDebug() << displayLower << lineMaxTime << a;
+//    qint64 a = lineMaxTime - displayupper + displayLower;
+//    qDebug() << (a / (TimeStep * 1000));
 //    pRangeXAxisControlTwoSpinBox->SetLowerValue(a / (TimeStep * 1000));
 }
 
@@ -147,6 +153,8 @@ void LineChartWidget::SetLowerXAxis(int percent)
     b = b / TimeStep / 1000;
 //    qDebug() << b;
     displayLower = lineMinTime + b * 1000;
+//    float a = (float)percent / 100.0;
+
     XAxisQDateTimeAdaptive();
 }
 
@@ -286,7 +294,7 @@ void LineChartWidget::setLineMin()
                     ++j;
                 }
                 if (i->pLineSeriesPointList->end() == j) break;
-                if(minValue > j->y())            minValue = (qint64)j->y();
+                if(minValue > j->y())           minValue = (qint64)j->y();
             }
             if (displayupper != (qint64)j->x()) ++j;
         }

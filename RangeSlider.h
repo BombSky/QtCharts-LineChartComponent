@@ -55,6 +55,7 @@ signals:
 
 public slots:
     void setLowerValue(int aLowerValue);
+    void blockChangedSignalSetLowerValue(int aLowerValue);
     void setUpperValue(int aUpperValue);
     void setMinimum(int aMinimum);
     void setMaximum(int aMaximum);

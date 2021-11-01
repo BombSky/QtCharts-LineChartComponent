@@ -285,6 +285,23 @@ void RangeSlider::setLowerValue(int aLowerValue)
     update();
 }
 
+void RangeSlider::blockChangedSignalSetLowerValue(int aLowerValue)
+{
+    if(aLowerValue > mMaximum)
+    {
+        aLowerValue = mMaximum;
+    }
+
+    if(aLowerValue < mMinimum)
+    {
+        aLowerValue = mMinimum;
+    }
+
+    mLowerValue = aLowerValue;
+
+    update();
+}
+
 void RangeSlider::setUpperValue(int aUpperValue)
 {
     if(aUpperValue > mMaximum)
